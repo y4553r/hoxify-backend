@@ -234,4 +234,21 @@ public class UserControllerTest {
 		assertThat(validationErrors.get("password")).isEqualTo("Password must have at least one uppercase, one lowercase and one number");
 	}
 	
+	@Test
+	public void postUser_whenAnotherUserHadSameUsername_receiveBadRequest() {
+		userRepository.save(createValidUser());
+		User user = createValidUser();
+		ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+		Map<String, String> validationErrors = response.getBody().getValidationErrors();
+		assertThat(validationErrors.get("username")).isEqualTo("This username is in use");
+	}
+	
+	@Test
+	public void postUser_whenAnotherUserHadSameUsername_receiveMessageOfDuplicatedUsername() {
+		userRepository.save(createValidUser());
+		User user = createValidUser();
+		ResponseEntity<Object> response = postSignup(user, Object.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+	}
+	
 }
