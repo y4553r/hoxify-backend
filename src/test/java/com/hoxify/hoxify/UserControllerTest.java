@@ -18,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.hoxify.hoxify.error.ApiError;
 import com.hoxify.hoxify.shared.GenericResponse;
 import com.hoxify.hoxify.user.User;
 import com.hoxify.hoxify.user.UserRepository;
@@ -180,6 +181,20 @@ public class UserControllerTest {
 		user.setPassword("12345689");
 		ResponseEntity<Object> response = postSignup(user, Object.class);
 		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+	}
+	
+	@Test
+	public void postUser_whenUserIsInvalid_receiveApiError() {
+		User user = new User();
+		ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+		assertThat(response.getBody().getUrl()).isEqualTo(API_1_0_USERS);
+	}
+	
+	@Test
+	public void postUser_whenUserIsInvalid_receiveApiErrorWithValidationError() {
+		User user = new User();
+		ResponseEntity<ApiError> response = postSignup(user, ApiError.class);
+		assertThat(response.getBody().getValidationErrors().size()).isEqualTo(3);
 	}
 	
 }
