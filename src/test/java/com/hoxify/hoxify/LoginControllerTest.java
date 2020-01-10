@@ -2,6 +2,7 @@ package com.hoxify.hoxify;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.hoxify.hoxify.error.ApiError;
+import com.hoxify.hoxify.user.User;
+import com.hoxify.hoxify.user.UserRepository;
+import com.hoxify.hoxify.user.UserService;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
@@ -25,6 +29,18 @@ public class LoginControllerTest {
 	
 	@Autowired
 	TestRestTemplate testRestTemplate;
+	
+	@Autowired
+	UserRepository userRepository;
+	
+	@Autowired
+	UserService userService;
+	
+	@Before
+	public void cleanup() {
+		userRepository.deleteAll();
+		testRestTemplate.getRestTemplate().getInterceptors().clear();
+	}
 	
 	@Test
 	public void postLogin_withoutUserCredentials_receiveUnauthorized() {
@@ -56,6 +72,15 @@ public class LoginControllerTest {
 		authenticate();
 		ResponseEntity<Object> response = login(Object.class);
 		assertThat(response.getHeaders().containsKey("WWW-Authenticate")).isFalse();
+	}
+	
+	@Test
+	public void postLogin_withValidCredentials_receiveOk() {
+		User user = TestUtil.createValidUser();
+		userService.save(user);
+		authenticate();
+		ResponseEntity<Object> response = login(Object.class);
+		assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 	}
 
 	private void authenticate() {
