@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.hoxify.hoxify.error.ApiError;
 import com.hoxify.hoxify.shared.GenericResponse;
+import com.hoxify.hoxify.user.vm.UserVM;
 
 @RestController
 @RequestMapping("/api/1.0")
@@ -37,8 +38,8 @@ public class UserController {
 	}
 	
 	@GetMapping("/users")
-	Page<?> getUsers() {
-		return userService.getUsers();
+	Page<UserVM> getUsers() {
+		return userService.getUsers().map(UserVM::new);
 	}
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)

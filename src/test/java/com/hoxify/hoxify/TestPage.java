@@ -12,7 +12,7 @@ import lombok.Data;
 
 @Data
 public class TestPage<T> implements Page<T> {
-	
+
 	long totalElements;
 	int totalPages;
 	int number;
@@ -22,20 +22,8 @@ public class TestPage<T> implements Page<T> {
 	boolean first;
 	boolean next;
 	boolean previous;
-	
+
 	List<T> content;
-
-	@Override
-	public boolean hasContent() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Sort getSort() {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
 	public boolean hasNext() {
@@ -70,5 +58,17 @@ public class TestPage<T> implements Page<T> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
+	@Override
+	public Sort getSort() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean hasContent() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

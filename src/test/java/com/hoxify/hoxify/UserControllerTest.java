@@ -15,7 +15,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Page;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -263,6 +262,15 @@ public class UserControllerTest {
 		assertThat(response.getBody().getNumberOfElements()).isEqualTo(1);
 	}
 
+	@Test
+	public void getUsers_whenThereIsAUserInDB_receiveUserWithoutPassword() {
+		User user = TestUtil.createValidUser();
+		userRepository.save(user);
+		ResponseEntity<TestPage<Map<String, Object>>> response = getUsers(new ParameterizedTypeReference<TestPage<Map<String, Object>>>() {});
+		Map<String, Object> entity = response.getBody().getContent().get(0);
+		assertThat(entity.containsKey("password")).isFalse();
+	}
+	
 	public <T> ResponseEntity<T> postSignup(Object request, Class<T> response) {
 		return testRestTemplate.postForEntity(API_1_0_USERS, request, response);
 	}
